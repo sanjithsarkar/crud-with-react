@@ -51,6 +51,7 @@ const UserList = () => {
                                 <th scope="col">#</th>
                                 <th scope="col">First</th>
                                 <th>Email</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,6 +62,8 @@ const UserList = () => {
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
                                     <td>
+                                        <Link to={`/user/${user.id}`} className='btn btn-primary me-2'>Edit</Link>
+                                        <Link to={`/user/${user.id}`} className='btn btn-success me-2'>Show</Link>
                                         <button onClick={() => handleDelete(user.id)} className='btn btn-danger'>Delete</button>
                                     </td>
                                 </tr>

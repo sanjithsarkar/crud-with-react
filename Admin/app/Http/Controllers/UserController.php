@@ -38,4 +38,16 @@ class UserController extends Controller
 
         return response()->json(['users' => $users]);
     }
+
+    public function Show(User $user){
+        return response()->json(['user' => $user]);
+    }
+
+    public function Update(User $user, Request $request){
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->update();
+        return response()->json(['user' => $user]);
+    }
 }
