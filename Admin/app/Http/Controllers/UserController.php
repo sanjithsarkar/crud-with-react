@@ -24,6 +24,8 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()]);
         }
 
+        //dd($request->all());
+
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
 
@@ -36,9 +38,6 @@ class UserController extends Controller
         }
         $user = User::create($input);
 
-        // $success['token'] = $user->createToken('MyApp')->plainTextToken;
-        // $success['name'] = $user->name;
-
         $response = [
             'success' => true,
             'message' => 'User Register Successfully!!'
@@ -46,6 +45,9 @@ class UserController extends Controller
 
         return response()->json($response, 200);
     }
+
+
+    // ------------------- display all user ------------------------
 
     public function Index()
     {
@@ -58,24 +60,70 @@ class UserController extends Controller
         return response()->json(['users' => $users]);
     }
 
+
+    // ------------------- Delete user by id ------------------------
+
     public function Destroy(User $user)
     {
-        $users = $user->delete();
 
-        return response()->json(['users' => $users]);
-    }
+        $image = $user->image;
 
-    public function Show(User $user)
-    {
+        if ($image) {
+            unlink(storage_path('app/' . $image));
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully.',
+            ]);
+        } else {
+
+            $user->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully.',
+            ]);
+        }
+
         return response()->json(['user' => $user]);
     }
 
-    public function Update(User $user, Request $request)
+
+    // ------------------- display user by id ------------------------
+
+    public function Show(User $user)
     {
+        $user->image_url = Storage::url($user->image);
+
+        return response()->json(['user' => $user]);
+    }
+
+
+    // ------------------- update user by id ------------------------
+
+    public function update(User $user, Request $request)
+    {
+        // dd($request->all());
 
         $user->name = $request->name;
         $user->email = $request->email;
+
+        $imgPath = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            if ($user->image) {
+                unlink(storage_path('app/' . $user->image));
+            }
+            $imageName = time() . $image->getClientOriginalName();
+            $imgPath = $image->storeAs('public/images', $imageName);
+            // $user['image'] = $imgPath;
+        }
+
+        $user->image = $imgPath ?? $user->image;
+
         $user->update();
+
         return response()->json(['user' => $user]);
     }
 }

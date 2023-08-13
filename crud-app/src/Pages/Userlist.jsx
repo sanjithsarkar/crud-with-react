@@ -9,6 +9,8 @@ const UserList = () => {
         fetchUsers();
     }, []);
 
+    // --------------------- Get all user -----------------------
+
     const fetchUsers = () => {
         axios.get('http://127.0.0.1:8000/api/users')
         .then((response) => {
@@ -18,6 +20,7 @@ const UserList = () => {
     }
 
 
+// ------------------ Delete method -------------------------
 
     const handleDelete = (id) => {
         axios.delete(`http://127.0.0.1:8000/api/users/${id}`)
@@ -62,7 +65,7 @@ const UserList = () => {
                                     <td>{user.id}</td>
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
-                                    <img src={`http://localhost:8000${user.image_url}`} alt={user.name} width="60px"/>
+                                    <td><img src={`http://localhost:8000${user.image_url}`} alt={user.name} width="60px"/></td>
                                     <td>
                                         <Link to={`/user/${user.id}`} className='btn btn-primary me-2'>Edit</Link>
                                         <Link to={`/user/${user.id}`} className='btn btn-success me-2'>Show</Link>

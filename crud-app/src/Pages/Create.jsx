@@ -10,6 +10,7 @@ const CreateUser = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [image, setImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -21,18 +22,32 @@ const CreateUser = () => {
     };
 
 
+    //----------   display image  ----------------
+
+    const handleImageChange = (e) => {
+        const selectedImage = e.target.files[0];
+
+        if (selectedImage) {
+            // Display the selected image as a preview
+            const imageURL = URL.createObjectURL(selectedImage);
+            setPreviewImage(imageURL);
+            setImage(selectedImage);
+        }
+    };
+
+
+    // ----------------- Insert data ------------------
 
     const handleCreate = (e) => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('password', password);
         formData.append('image', image);
 
         const userData = { name, email, password };
-        axios.post('http://127.0.0.1:8000/api/users', formData, {
+        axios.post('http://127.0.0.1:8000/api/users', formData,{
+            params: userData
+        }, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -109,8 +124,8 @@ const CreateUser = () => {
                         {errors && errors.password && <div className="alert alert-danger">{errors.password[0]}</div>}
                     </div>
 
-                    <div className="mb-3">
-                        <label className="form-label">Password</label>
+                    {/* <div className="mb-3">
+                        <label className="form-label">Image</label>
                         <input
                             type="file"
                             accept="image/*"
@@ -118,6 +133,17 @@ const CreateUser = () => {
                             onChange={(e) => setImage(e.target.files[0])}
                         />
                         {errors && errors.image && <div className="alert alert-danger">{errors.image[0]}</div>}
+                    </div> */}
+
+                    <div className="mb-3">
+                        <label className="form-label">Image</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="form-control"
+                            onChange={handleImageChange}
+                        />
+                        {previewImage && <img src={previewImage} className='mt-3' alt="Preview" width="60px" />}
                     </div>
 
 
