@@ -9,6 +9,7 @@ const CreateUser = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [image, setImage] = useState(null);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -16,11 +17,26 @@ const CreateUser = () => {
         setName('');
         setEmail('');
         setPassword('');
+        setImage(null);
     };
 
-    const handleCreate = () => {
+
+
+    const handleCreate = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('image', image);
+
         const userData = { name, email, password };
-        axios.post('http://127.0.0.1:8000/api/users', userData)
+        axios.post('http://127.0.0.1:8000/api/users', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
             .then((res) => {
                 if (res.data.errors) {
                     setErrors(res.data.errors);
@@ -92,6 +108,20 @@ const CreateUser = () => {
                         />
                         {errors && errors.password && <div className="alert alert-danger">{errors.password[0]}</div>}
                     </div>
+
+                    <div className="mb-3">
+                        <label className="form-label">Password</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="form-control"
+                            onChange={(e) => setImage(e.target.files[0])}
+                        />
+                        {errors && errors.image && <div className="alert alert-danger">{errors.image[0]}</div>}
+                    </div>
+
+
+
 
 
                     <button onClick={handleCreate} className='btn btn-success me-4'>Create User</button>

@@ -51,6 +51,7 @@ const UserList = () => {
                                 <th scope="col">#</th>
                                 <th scope="col">First</th>
                                 <th>Email</th>
+                                <th>Image</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -61,6 +62,7 @@ const UserList = () => {
                                     <td>{user.id}</td>
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
+                                    <img src={`http://localhost:8000${user.image_url}`} alt={user.name} width="60px"/>
                                     <td>
                                         <Link to={`/user/${user.id}`} className='btn btn-primary me-2'>Edit</Link>
                                         <Link to={`/user/${user.id}`} className='btn btn-success me-2'>Show</Link>

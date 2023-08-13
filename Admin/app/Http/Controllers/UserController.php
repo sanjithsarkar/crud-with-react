@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -16,6 +17,7 @@ class UserController extends Controller
             'name' => 'required|min:3',
             'email' => 'required|email',
             'password' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -24,6 +26,14 @@ class UserController extends Controller
 
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
+
+        $imgPath = '';
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . $image->getClientOriginalName();
+            $imgPath = $image->storeAs('public/images', $imageName);
+            $input['image'] = $imgPath;
+        }
         $user = User::create($input);
 
         // $success['token'] = $user->createToken('MyApp')->plainTextToken;
@@ -40,6 +50,10 @@ class UserController extends Controller
     public function Index()
     {
         $users = User::all();
+
+        foreach ($users as $user) {
+            $user->image_url = Storage::url($user->image);
+        }
 
         return response()->json(['users' => $users]);
     }
